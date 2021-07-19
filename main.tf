@@ -1,19 +1,8 @@
-/*terraform {
-  required_providers {
-    //add additional providers ex. nginx
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 3.27"
-    }
-  }
-  required_version = ">= 0.14.9"
-}*/
-//nginx details
+
 provider "aws" {
   profile = "default"
   region  = "us-east-2"
 }
-// reference terraform docs for installing nginx
 resource "aws_instance" "tf_server" {
   ami           = "ami-00399ec92321828f5"
   associate_public_ip_address = var.associate_public_ip_address
