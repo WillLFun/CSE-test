@@ -1,0 +1,8 @@
+#!/bin/bash
+add-apt-repository -y ppa:wireguard/wireguard
+apt update
+apt install -y wireguard
+mkdir /etc/wireguard/keys
+cd /etc/wireguard/keys
+umask 077
+wg genkey | tee privatekey | wg pubkey > publickey
