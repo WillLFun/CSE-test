@@ -8,6 +8,13 @@ Author: William Loy
 
 This application deploys a web server behind Keycloak authentication and Wireguard VPN.
 
+## Prerequisites
+
+- AWS account
+- Terraform installed locally
+- AWS CLI installed locally
+- AWS Access Keys 
+
 ## Deployment instructions
 
 1. Clone https://github.com/WillLFun/CSE-test

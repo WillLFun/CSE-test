@@ -32,8 +32,8 @@ variable "ec2_instance_type" {
   default     = "t2.micro"
 }
 
-variable "ec2_instance_count" {
+/*variable "ec2_instance_count" {
   description = "Number of instances to deploy"
   type        = number
   default     = 2
-}
+}*/
