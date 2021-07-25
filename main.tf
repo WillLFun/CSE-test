@@ -47,7 +47,7 @@ resource "aws_instance" "web_server" {
    connection {
      type = "ssh"
      user = "ubuntu"
-     private_key = file("nginx/will_terraform_key.pem")
+     private_key = file("nginx/_key.pem")
      host = "${self.public_ip}"
    }
   }
@@ -57,7 +57,7 @@ resource "aws_instance" "web_server" {
     connection {
       type = "ssh"
       user = "ubuntu"
-      private_key = file("nginx/will_terraform_key.pem")
+      private_key = file("nginx/_key.pem")
       host = "${self.public_ip}"
     }
   }
@@ -67,7 +67,7 @@ resource "aws_instance" "web_server" {
     connection {
       type = "ssh"
       user = "ubuntu"
-      private_key = file("nginx/will_terraform_key.pem")
+      private_key = file("nginx/_key.pem")
       host = "${self.public_ip}"
     }
   }
@@ -77,7 +77,7 @@ resource "aws_instance" "web_server" {
     connection {
       type = "ssh"
       user = "ubuntu"
-      private_key = file("nginx/will_terraform_key.pem")
+      private_key = file("nginx/_key.pem")
       host = "${self.public_ip}"
     }
   }
