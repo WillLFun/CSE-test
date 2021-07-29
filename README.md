@@ -13,14 +13,17 @@ This application deploys a web server behind Keycloak authentication and Wiregua
 - AWS account
 - Terraform installed locally
 - AWS CLI installed locally
-- AWS Access Keys 
+- AWS Access Keys
 
 ## Deployment instructions
 
 1. Clone https://github.com/WillLFun/CSE-test
 
-2. From the CLI run the following commands in this order:
+2. Edit all necessary variables.
 
+2. `cd` to the cloned repository and run the following commands in this order:
+
+    `make build`
     `terraform init`
     `terraform plan`
 

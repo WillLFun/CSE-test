@@ -1,0 +1,13 @@
+[Unit]
+Description= Flask Server
+After=syslog.target network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/flask_app
+Environment=FLASK_APP=app
+ExecStart=/usr/local/bin/flask run
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
