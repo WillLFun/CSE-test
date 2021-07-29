@@ -1,8 +1,0 @@
-#!/bin/bash
-sudo apt-get update
-sudo apt-get install default-jdk -y
-sudo cd /opt
-sudo wget https://github.com/keycloak/keycloak/releases/download/14.0.0/keycloak-14.0.0.tar.gz
-sudo tar -xvzf keycloak-14.0.0.tar.gz
-sudo mv keycloak-14.0.0 /opt/keycloak
-sudo /opt/keycloak/bin/standalone.sh &

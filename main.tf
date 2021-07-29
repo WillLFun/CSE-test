@@ -29,7 +29,6 @@ resource "aws_instance" "web_server" {
   key_name                    = var.ec2_key_name
   monitoring                  = true
   vpc_security_group_ids      = var.vpc_security_group_ids
-  #user_data = templatefile("${path.module}/userdata.tmpl", {})
   tags = {
     Name = "wireguard-nginx"
   }
@@ -40,7 +39,7 @@ resource "aws_instance" "web_server" {
     connection {
       type = "ssh"
       user = "ubuntu"
-      private_key = file("nginx/will_terraform_key.pem")
+      private_key = file("nginx/aws_key_pair.pem")
       host = "${self.public_ip}"
     }
   }
@@ -69,7 +68,7 @@ resource "aws_instance" "web_server" {
    connection {
      type = "ssh"
      user = "ubuntu"
-     private_key = file("nginx/will_terraform_key.pem")
+     private_key = file("nginx/aws_key_pair.pem")
      host = "${self.public_ip}"
    }
   }
@@ -79,7 +78,7 @@ resource "aws_instance" "web_server" {
     connection {
       type = "ssh"
       user = "ubuntu"
-      private_key = file("nginx/will_terraform_key.pem")
+      private_key = file("nginx/aws_key_pair.pem")
       host = "${self.public_ip}"
     }
   }
@@ -89,7 +88,7 @@ resource "aws_instance" "web_server" {
     connection {
       type = "ssh"
       user = "ubuntu"
-      private_key = file("nginx/will_terraform_key.pem")
+      private_key = file("nginx/aws_key_pair.pem")
       host = "${self.public_ip}"
     }
   }
@@ -99,7 +98,7 @@ resource "aws_instance" "web_server" {
     connection {
       type = "ssh"
       user = "ubuntu"
-      private_key = file("nginx/will_terraform_key.pem")
+      private_key = file("nginx/aws_key_pair.pem")
       host = "${self.public_ip}"
     }
   }
@@ -129,7 +128,7 @@ resource "aws_instance" "auth_server" {
     connection {
       type = "ssh"
       user = "ubuntu"
-      private_key = file("nginx/will_terraform_key.pem")
+      private_key = file("nginx/aws_key_pair.pem")
       host = "${self.public_ip}"
     }
   }
@@ -158,7 +157,7 @@ resource "aws_instance" "auth_server" {
   connection {
     type = "ssh"
     user = "ubuntu"
-    private_key = file("keycloak/will_terraform_key.pem")
+    private_key = file("keycloak/aws_key_pair.pem")
     host = "${self.public_ip}"
   }
  }
@@ -168,7 +167,7 @@ resource "aws_instance" "auth_server" {
    connection {
      type = "ssh"
      user = "ubuntu"
-     private_key = file("keycloak/will_terraform_key.pem")
+     private_key = file("keycloak/aws_key_pair.pem")
      host = "${self.public_ip}"
    }
  }
@@ -178,7 +177,7 @@ resource "aws_instance" "auth_server" {
    connection {
      type = "ssh"
      user = "ubuntu"
-     private_key = file("keycloak/will_terraform_key.pem")
+     private_key = file("keycloak/aws_key_pair.pem")
      host = "${self.public_ip}"
    }
  }
@@ -188,7 +187,7 @@ resource "aws_instance" "auth_server" {
    connection {
      type = "ssh"
      user = "ubuntu"
-     private_key = file("keycloak/will_terraform_key.pem")
+     private_key = file("keycloak/aws_key_pair.pem")
      host = "${self.public_ip}"
    }
  }
@@ -198,7 +197,7 @@ resource "aws_instance" "auth_server" {
    connection {
      type = "ssh"
      user = "ubuntu"
-     private_key = file("keycloak/will_terraform_key.pem")
+     private_key = file("keycloak/aws_key_pair.pem")
      host = "${self.public_ip}"
    }
  }
@@ -218,7 +217,7 @@ resource "aws_instance" "auth_server" {
   connection {
     type = "ssh"
     user = "ubuntu"
-    private_key = file("nginx/will_terraform_key.pem")
+    private_key = file("nginx/aws_key_pair.pem")
     host = "${self.public_ip}"
   }
  }
