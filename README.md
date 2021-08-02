@@ -19,7 +19,11 @@ This application deploys a web server behind Keycloak authentication and Wiregua
 
 1. Clone https://github.com/WillLFun/CSE-test
 
-2. Edit all necessary variables.
+2. Edit all necessary variables and file paths in the following files:
+
+    - Makefile
+    - main.tf
+    - login.sh
 
 2. `cd` to the cloned repository and run the following commands in this order:
 
@@ -42,4 +46,4 @@ This application deploys a web server behind Keycloak authentication and Wiregua
 
 8. Verify you are connected to Wireguard VPN with `wg show`.
 
-9. Navigate to your domain in a web browser.
+9. Navigate to the domain NGINX is serving in a web browser.

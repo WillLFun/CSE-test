@@ -112,6 +112,7 @@ resource "aws_instance" "web_server" {
      "sudo /etc/wireguard/wire-config.sh",
      "sudo systemctl restart nginx",
      "sudo wg-quick up wg0",
+     "sysctl -w net.ipv4.ip_forward=1",
      # Remove --staging flag from cerbot when ready for production certs
      "sudo echo \"05 * * * * sudo certbot --staging --nginx -d app.southwindroast.com --non-interactive --agree-tos -m youremail@email.com\" > mycron",
      "sudo crontab mycron",
