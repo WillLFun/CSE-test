@@ -14,7 +14,7 @@ provider "aws" {
   profile = "default"
   region  = "us-east-2"
 }
-
+# Create web server hosting Wireguard and NGINX
 resource "aws_instance" "web_server" {
   ami           = "ami-00399ec92321828f5"
   iam_instance_profile = "${aws_iam_instance_profile.test_profile.name}"
@@ -33,10 +33,11 @@ resource "aws_instance" "web_server" {
     connection {
       type = "ssh"
       user = "ubuntu"
-      private_key = file("nginx/will_terraform_key.pem")
+      private_key = file("nginx/$keypair.pem")
       host = "${self.public_ip}"
     }
   }
+  # Server configurations
   provisioner "remote-exec" {
    inline = [
      # Prevents timing conflict between cloud-init and the package installations
@@ -46,6 +47,7 @@ resource "aws_instance" "web_server" {
      "sudo apt-get install nginx wireguard certbot python3-certbot-nginx awscli -y",
      "sudo mkdir -p /var/www/southwindroast/html",
      "sudo chown -R ubuntu:ubuntu /var/www/southwindroast/",
+     "sudo chmod -R 755 /var/www/southwindroast/",
      "sudo chown -R ubuntu:ubuntu /var/www/",
      "sudo chown -R ubuntu:ubuntu /etc/nginx/",
      "sudo ln -s /etc/nginx/sites-available/southwindroast /etc/nginx/sites-enabled/",
@@ -53,26 +55,22 @@ resource "aws_instance" "web_server" {
      "sudo chown -R ubuntu:ubuntu /etc/wireguard/",
      "sudo wg genkey | tee /etc/wireguard/keys/privatekey | wg pubkey > /etc/wireguard/keys/publickey",
      "sudo aws s3 cp /etc/wireguard/keys/publickey s3://wireguard-credentials/publickey",
-     #"sudo ip link add dev wg0 type wireguard",
-     #"sudo ip address add dev wg0 192.168.2.1/24",
-     #"sudo wg set wg0 listen-port 51820 private-key /etc/wireguard/keys/privatekey peer \"$(cat /tmp/peer-publickey)\" allowed-ips 192.168.2.1/24",
-     #"sudo echo \"05 * * * * sudo certbot --staging --nginx -d app.southwindroast.com --non-interactive --agree-tos -m williamloy23@gmail.com\" > mycron",
-     #"sudo crontab mycron",
    ]
    connection {
      type = "ssh"
      user = "ubuntu"
-     private_key = file("nginx/will_terraform_key.pem")
+     private_key = file("nginx/$keypair.pem")
      host = "${self.public_ip}"
    }
   }
+  # File provisioners to add config files
   provisioner "file" {
     source = "wireguard/wg0.conf"
     destination = "/etc/wireguard/wg0.conf"
     connection {
       type = "ssh"
       user = "ubuntu"
-      private_key = file("nginx/will_terraform_key.pem")
+      private_key = file("nginx/$keypair.pem")
       host = "${self.public_ip}"
     }
   }
@@ -82,7 +80,7 @@ resource "aws_instance" "web_server" {
     connection {
       type = "ssh"
       user = "ubuntu"
-      private_key = file("nginx/will_terraform_key.pem")
+      private_key = file("nginx/$keypair.pem")
       host = "${self.public_ip}"
     }
   }
@@ -92,37 +90,38 @@ resource "aws_instance" "web_server" {
     connection {
       type = "ssh"
       user = "ubuntu"
-      private_key = file("nginx/will_terraform_key.pem")
+      private_key = file("nginx/$keypair.pem")
       host = "${self.public_ip}"
     }
   }
+  provisioner "file" {
+    source = "nginx/southwindroast-temp"
+    destination = "/etc/nginx/southwindroast-temp"
+    connection {
+      type = "ssh"
+      user = "ubuntu"
+      private_key = file("nginx/$keypair.pem")
+      host = "${self.public_ip}"
+    }
+  }
+  # Server configurations dependent on file provisioners
   provisioner "remote-exec" {
    inline = [
      "sudo chmod ugo+x /etc/wireguard/wire-config.sh",
      "sudo chmod 777 /etc/wireguard/keys/privatekey",
-     "sudo ./etc/wireguard/wire-config.sh",
-     "sudo ip link add dev wg0 type wireguard",
-     "sudo ip address add dev wg0 192.168.2.1/24",
-     "sudo wg set wg0 listen-port 51820 private-key /etc/wireguard/keys/privatekey peer \"$(cat /tmp/peer-publickey)\" allowed-ips 192.168.2.1/24",
-     #"sudo echo \"05 * * * * sudo certbot --staging --nginx -d app.southwindroast.com --non-interactive --agree-tos -m williamloy23@gmail.com\" > mycron",
-     #"sudo crontab mycron",
+     "sudo /etc/wireguard/wire-config.sh",
+     "sudo systemctl restart nginx",
+     "sudo wg-quick up wg0",
+     # Remove --staging flag from cerbot when ready for production certs
+     "sudo echo \"05 * * * * sudo certbot --staging --nginx -d app.southwindroast.com --non-interactive --agree-tos -m youremail@email.com\" > mycron",
+     "sudo crontab mycron",
    ]
    connection {
      type = "ssh"
      user = "ubuntu"
-     private_key = file("nginx/will_terraform_key.pem")
+     private_key = file("nginx/$keypair.pem")
      host = "${self.public_ip}"
    }
-  }
-  provisioner "file" {
-    source = "nginx/southwindroast"
-    destination = "/etc/nginx/sites-available/southwindroast"
-    connection {
-      type = "ssh"
-      user = "ubuntu"
-      private_key = file("nginx/will_terraform_key.pem")
-      host = "${self.public_ip}"
-    }
   }
   provisioner "file" {
     source = "nginx/index.html"
@@ -130,17 +129,7 @@ resource "aws_instance" "web_server" {
     connection {
       type = "ssh"
       user = "ubuntu"
-      private_key = file("nginx/will_terraform_key.pem")
-      host = "${self.public_ip}"
-    }
-  }
-  provisioner "file" {
-    source = "nginx/broken-ankles.png"
-    destination = "/var/www/southwindroast/html/broken-ankles.png"
-    connection {
-      type = "ssh"
-      user = "ubuntu"
-      private_key = file("nginx/will_terraform_key.pem")
+      private_key = file("nginx/$keypair.pem")
       host = "${self.public_ip}"
     }
   }
@@ -150,11 +139,12 @@ resource "aws_instance" "web_server" {
     connection {
       type = "ssh"
       user = "ubuntu"
-      private_key = file("nginx/will_terraform_key.pem")
+      private_key = file("nginx/$keypair.pem")
       host = "${self.public_ip}"
     }
   }
 }
+# Create A record for web server
 resource "aws_route53_record" "southwind" {
   zone_id = "Z02132171N9ZS2TLQNMG3"
   name    = "app.southwindroast.com"
@@ -162,8 +152,8 @@ resource "aws_route53_record" "southwind" {
   ttl     = "60"
   records = [aws_instance.web_server.public_ip]
 }
-
-/*resource "aws_instance" "auth_server" {
+# Create Keycloak and Flask server
+resource "aws_instance" "auth_server" {
   ami           = "ami-00399ec92321828f5"
   iam_instance_profile = "${aws_iam_instance_profile.test_profile.name}"
   associate_public_ip_address = var.associate_public_ip_address
@@ -180,10 +170,11 @@ resource "aws_route53_record" "southwind" {
     connection {
       type = "ssh"
       user = "ubuntu"
-      private_key = file("nginx/will_terraform_key.pem")
+      private_key = file("nginx/$keypair.pem")
       host = "${self.public_ip}"
     }
   }
+  # Server configurations
   provisioner "remote-exec" {
    inline = [
     "while [ ! -f /var/lib/cloud/instance/boot-finished ]; do echo 'Waiting for cloud-init...'; sleep 1; done",
@@ -205,11 +196,10 @@ resource "aws_route53_record" "southwind" {
     "sudo cp /opt/keycloak/docs/contrib/scripts/systemd/wildfly.service /etc/systemd/system/keycloak.service",
     "sudo chown -R ubuntu:ubuntu /etc/systemd/system/",
    ]
-   #remove staging from cerbot when finished
   connection {
     type = "ssh"
     user = "ubuntu"
-    private_key = file("keycloak/will_terraform_key.pem")
+    private_key = file("keycloak/$keypair.pem")
     host = "${self.public_ip}"
   }
  }
@@ -219,7 +209,7 @@ resource "aws_route53_record" "southwind" {
    connection {
      type = "ssh"
      user = "ubuntu"
-     private_key = file("keycloak/will_terraform_key.pem")
+     private_key = file("keycloak/$keypair.pem")
      host = "${self.public_ip}"
    }
  }
@@ -229,7 +219,7 @@ resource "aws_route53_record" "southwind" {
    connection {
      type = "ssh"
      user = "ubuntu"
-     private_key = file("keycloak/will_terraform_key.pem")
+     private_key = file("keycloak/$keypair.pem")
      host = "${self.public_ip}"
    }
  }
@@ -239,7 +229,7 @@ resource "aws_route53_record" "southwind" {
    connection {
      type = "ssh"
      user = "ubuntu"
-     private_key = file("keycloak/will_terraform_key.pem")
+     private_key = file("keycloak/$keypair.pem")
      host = "${self.public_ip}"
    }
  }
@@ -249,34 +239,39 @@ resource "aws_route53_record" "southwind" {
    connection {
      type = "ssh"
      user = "ubuntu"
-     private_key = file("keycloak/will_terraform_key.pem")
+     private_key = file("keycloak/$keypair.pem")
      host = "${self.public_ip}"
    }
  }
  provisioner "remote-exec" {
   inline = [
    "sudo mv /tmp/keycloak-site /etc/nginx/sites-available/default",
-   "sudo echo \"02 * * * * sudo certbot --staging --nginx -d login.southwindroast.com --non-interactive --agree-tos -m williamloy23@gmail.com\" > /tmp/mycron",
+   # Remove --staging flag from cerbot when ready for production certs
+   "sudo echo \"05 * * * * sudo certbot --staging --nginx -d login.southwindroast.com --non-interactive --agree-tos -m youremail@email.com\" > /tmp/mycron",
    "sudo crontab /tmp/mycron",
-   #"sudo /opt/keycloak/bin/add-user-keycloak.sh -r master -u williamloy -p !1Password!1",
+   "sudo /opt/keycloak/bin/add-user-keycloak.sh -r master -u $user -p $password",
    "sudo systemctl daemon-reload",
    "sudo systemctl enable keycloak",
    "sudo systemctl enable flask",
    "sudo systemctl start keycloak",
    "sudo systemctl restart nginx",
+   "cd ~/flask_app/",
+   "nohup flask run &>/dev/null &",
+   "sleep 1",
   ]
   connection {
     type = "ssh"
     user = "ubuntu"
-    private_key = file("nginx/will_terraform_key.pem")
+    private_key = file("nginx/$keypair.pem")
     host = "${self.public_ip}"
   }
  }
-}*/
-/*resource "aws_route53_record" "roast" {
+}
+# Create A record for auth server
+resource "aws_route53_record" "roast" {
   zone_id = "Z02132171N9ZS2TLQNMG3"
   name    = "login.southwindroast.com"
   type    = "A"
   ttl     = "60"
   records = [aws_instance.auth_server.public_ip]
-}*/
+}

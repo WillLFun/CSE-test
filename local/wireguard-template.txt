@@ -1,10 +1,10 @@
 [Interface]
-Address = 10.0.0.2
-SaveConfig = true
-ListenPort = 65300
 PrivateKey = ${mykey}
+Address = 10.10.0.2/32
+DNS = 1.1.1.1
 
 [Peer]
 PublicKey = ${wirekey}
-AllowedIPs =
-Endpoint = 18.219.116.103:51820
+AllowedIPs = 0.0.0.0/0, ::/0
+Endpoint = ${web_server}:51820
+PersistentKeepalive=25

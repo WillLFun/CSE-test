@@ -16,14 +16,10 @@ variable "vpc_security_group_ids" {
   default     = []
 }
 
-/*variable "vpc_subnet_ids" {
-  description = "AWS VPC Subnet ID"
-  type        = string
-}*/
-
 variable "ec2_key_name" {
   description = "AWS EC2 Key name for SSH access"
   type        = string
+  default     = "$keypair"
 }
 
 variable "ec2_instance_type" {
@@ -31,9 +27,3 @@ variable "ec2_instance_type" {
   type        = string
   default     = "t2.micro"
 }
-
-/*variable "ec2_instance_count" {
-  description = "Number of instances to deploy"
-  type        = number
-  default     = 2
-}*/

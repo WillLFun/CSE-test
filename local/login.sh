@@ -4,10 +4,13 @@
 #echo -n " - password: "; read -s password; echo
 export wirekey=`curl http://login.southwindroast.com/api`
 echo $wirekey
-mykey=`/Users/will0342/Documents/terraform-project/learn-terraform-aws-instance/privatekey`
+
+export mykey=`cat /path/local/privatekey`
 echo $mykey
 
-envsubst < /Users/will0342/Documents/terraform-project/wireguard-test.txt > /etc/wireguard/wg0.conf
-# test
-#echo -n " - curl - "
-#curl https://app.southwindroast.com
+web_server=`terraform output -raw web_server_ip`
+echo $web_server
+
+envsubst < /path/local/wireguard-template.txt > /etc/wireguard/wg0.conf
+
+sudo wg-quick up wg0

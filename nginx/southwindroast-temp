@@ -1,0 +1,8 @@
+server {
+        listen 80;
+    	  server_name app.southwindroast.com;
+        root /var/www/southwindroast/html;
+        index index.html;
+        allow ${server_ip};
+        deny all;
+}
