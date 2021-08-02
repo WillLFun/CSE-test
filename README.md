@@ -38,8 +38,8 @@ This application deploys a web server behind Keycloak authentication and Wiregua
 
 6. Follow the remaining prompts to complete the deployment.
 
-7. Attempt to access domain.com/IP x.x.x.x.x
+7. Run the login.sh script.
 
-    - Enter username and password.
+8. Verify you are connected to Wireguard VPN with `wg show`.
 
-8. You should now be taken to the HTML page served by NGINX.
+9. Navigate to your domain in a web browser.

@@ -1,6 +1,6 @@
 [Interface]
 PrivateKey= ${pkey}
-Address= ${server_ip}
+Address= 10.10.0.1
 SaveConfig=true
 PostUp = iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE;
 PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE;
@@ -8,5 +8,4 @@ ListenPort = 51820
 
 [Peer]
 PublicKey = ${peer_key}
-AllowedIPs = 10.10.0.1/24
-PersistentKeepalive = 25
+AllowedIPs = 10.10.0.2/32
